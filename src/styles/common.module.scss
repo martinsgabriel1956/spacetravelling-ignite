@@ -20,3 +20,22 @@
     }
   }
 }
+
+.buttonModePreview  {
+  padding: 1rem;
+  font-weight: bold;
+  background: var(--heading);
+  text-align: center;
+  border-radius: .30rem;
+  opacity: 1;
+  cursor: pointer;
+  transition: opacity .2s;
+
+  &:hover {
+    opacity: .9;
+  }
+}
+
+.modePreviewContainer {
+  padding: 3rem 0 5rem;
+}

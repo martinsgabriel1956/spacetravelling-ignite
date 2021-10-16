@@ -1,6 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Prismic from '@prismicio/client';
+import Link from 'next/link';
 import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -14,6 +15,7 @@ import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -31,9 +33,10 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
 }
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post, preview }: PostProps) {
   const { isFallback } = useRouter();
 
   const estimatedTime = post.data.content.reduce((total, content) => {
@@ -95,6 +98,15 @@ export default function Post({ post }: PostProps) {
                 {`${readTime} min`}
               </span>
             </div>
+            <p className={styles.lastPublication}>
+              {format(
+                new Date(post.last_publication_date),
+                "'* editado em' dd MMM yyyy', às' H':'m",
+                {
+                  locale: ptBR,
+                }
+              )}
+            </p>
             <article className={styles.content}>
               {post.data.content.map(({ body, heading }) => (
                 <div key={heading}>
@@ -107,6 +119,15 @@ export default function Post({ post }: PostProps) {
                 </div>
               ))}
             </article>
+            <div className={commonStyles.modePreviewContainer}>
+              {preview && (
+                <aside className={commonStyles.buttonModePreview}>
+                  <Link href="/api/exit-preview">
+                    <a>Sair do modo Preview</a>
+                  </Link>
+                </aside>
+              )}
+            </div>
           </div>
         </>
       )}
@@ -132,16 +153,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async context => {
-  const { params } = context;
-  const slug = params.slug as string;
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
+  const { slug } = params;
 
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', slug, {});
+  const response = await prismic.getByUID('posts', String(slug), {});
 
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
+    last_publication_date: response.last_publication_date,
     data: {
       title: response.data.title,
       subtitle: response.data.subtitle,
@@ -161,6 +186,7 @@ export const getStaticProps: GetStaticProps = async context => {
   return {
     props: {
       post,
+      preview,
     },
   };
 };
