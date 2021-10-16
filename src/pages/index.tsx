@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
-import { AiOutlineCalendar } from 'react-icons/ai';
+import Prismic from '@prismicio/client';
 import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -29,7 +32,9 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home({}) {
+export default function Home({ postsPagination }: HomeProps) {
+  const [posts, setPosts] = useState(postsPagination.results);
+
   return (
     <>
       <Head>
@@ -37,196 +42,84 @@ export default function Home({}) {
       </Head>
       <main className={styles.contentContainer}>
         <ul>
-          <li className={styles.postContainer}>
-            <Link href="/">
-              <a>
-                <h1>Como utilizar Hooks</h1>
-                <p>Pensando em sincronização em vez de ciclos de vida.</p>
-                <div className={styles.postInfo}>
-                  <span>
-                    <FiCalendar
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    15 Mar 2021
-                  </span>
-                  <span>
-                    <FiUser
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    Joseph Oliveira
-                  </span>
-                </div>
-              </a>
-            </Link>
-          </li>
-          <li className={styles.postContainer}>
-            <Link href="/">
-              <a>
-                <h1>Como utilizar Hooks</h1>
-                <p>Pensando em sincronização em vez de ciclos de vida.</p>
-                <div className={styles.postInfo}>
-                  <span>
-                    <AiOutlineCalendar
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    15 Mar 2021
-                  </span>
-                  <span>
-                    <FiUser
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    Joseph Oliveira
-                  </span>
-                </div>
-              </a>
-            </Link>
-          </li>
-          <li className={styles.postContainer}>
-            <Link href="/">
-              <a>
-                <h1>Como utilizar Hooks</h1>
-                <p>Pensando em sincronização em vez de ciclos de vida.</p>
-                <div className={styles.postInfo}>
-                  <span>
-                    <AiOutlineCalendar
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    15 Mar 2021
-                  </span>
-                  <span>
-                    <FiUser
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    Joseph Oliveira
-                  </span>
-                </div>
-              </a>
-            </Link>
-          </li>
-          <li className={styles.postContainer}>
-            <Link href="/">
-              <a>
-                <h1>Como utilizar Hooks</h1>
-                <p>Pensando em sincronização em vez de ciclos de vida.</p>
-                <div className={styles.postInfo}>
-                  <span>
-                    <AiOutlineCalendar
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    15 Mar 2021
-                  </span>
-                  <span>
-                    <FiUser
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    Joseph Oliveira
-                  </span>
-                </div>
-              </a>
-            </Link>
-          </li>
-          <li className={styles.postContainer}>
-            <Link href="/">
-              <a>
-                <h1>Como utilizar Hooks</h1>
-                <p>Pensando em sincronização em vez de ciclos de vida.</p>
-                <div className={styles.postInfo}>
-                  <span>
-                    <AiOutlineCalendar
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    15 Mar 2021
-                  </span>
-                  <span>
-                    <FiUser
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    Joseph Oliveira
-                  </span>
-                </div>
-              </a>
-            </Link>
-          </li>
-          <li className={styles.postContainer}>
-            <Link href="/">
-              <a>
-                <h1>Como utilizar Hooks</h1>
-                <p>Pensando em sincronização em vez de ciclos de vida.</p>
-                <div className={styles.postInfo}>
-                  <span>
-                    <AiOutlineCalendar
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    15 Mar 2021
-                  </span>
-                  <span>
-                    <FiUser
-                      size={22}
-                      color="#BBBBBB"
-                      style={{
-                        marginRight: '10px',
-                      }}
-                    />
-                    Joseph Oliveira
-                  </span>
-                </div>
-              </a>
-            </Link>
-          </li>
+          {posts.map(post => (
+            <li className={styles.postContainer} key={post.uid}>
+              <Link href="/">
+                <a>
+                  <h1>{post.data.title}</h1>
+                  <p>{post.data.subtitle}</p>
+                  <div className={styles.postInfo}>
+                    <span>
+                      <FiCalendar
+                        size={22}
+                        color="#BBBBBB"
+                        style={{
+                          marginRight: '10px',
+                        }}
+                      />
+                      {format(
+                        new Date(post.first_publication_date),
+                        `dd MMM yyyy`,
+                        {
+                          locale: ptBR,
+                        }
+                      )}
+                    </span>
+                    <span>
+                      <FiUser
+                        size={22}
+                        color="#BBBBBB"
+                        style={{
+                          marginRight: '10px',
+                        }}
+                      />
+                      {post.data.author}
+                    </span>
+                  </div>
+                </a>
+              </Link>
+            </li>
+          ))}
         </ul>
-        <button type="button">Carregando mais posts</button>
+        {postsPagination.next_page !== null && (
+          <button type="button">Carregando mais posts</button>
+        )}
       </main>
     </>
   );
 }
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient();
-//   // const postsResponse = await prismic.query(TODO);
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient();
+  const postsResponse = await prismic.query(
+    [Prismic.Predicates.at('document.type', 'posts')],
+    {
+      fetch: ['post.title', 'post.content'],
+      pageSize: 10,
+    }
+  );
 
-//   // TODO
-// };
+  const posts = postsResponse.results.map((post: Post) => {
+    return {
+      uid: post.uid,
+      first_publication_date: post.first_publication_date,
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author,
+      },
+    };
+  });
+
+  const { next_page } = postsResponse;
+
+  return {
+    props: {
+      postsPagination: {
+        results: posts,
+        next_page,
+      },
+    },
+    revalidate: 60 * 30,
+  };
+};
