@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
 import Prismic from '@prismicio/client';
 import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
 import { format } from 'date-fns';
@@ -52,6 +53,9 @@ export default function Post({ post }: PostProps) {
         <h1>Carregando...</h1>
       ) : (
         <>
+          <Head>
+            <title>{post.data.title} | spacetravelling.</title>
+          </Head>
           <div className={styles.bannerContainer}>
             <img src={post.data.banner.url} alt="" />
           </div>
