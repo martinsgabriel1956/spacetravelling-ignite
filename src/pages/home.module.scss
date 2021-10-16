@@ -1,17 +1,10 @@
-.contentContainer {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 14rem;
-  height: calc(100vh - 5rem);
-
-  button {
-    background-color: transparent;
-    border: 0;
-    cursor: pointer;
-    font-weight: 700;
-    color: var(--highlight);
-    padding-bottom: 3rem;
-  }
+.loadMorePostsButton {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--highlight);
+  padding-bottom: 3rem;
 }
 
 .postContainer {
@@ -29,26 +22,11 @@
   }
 
   &:last-child {
-    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
   }
 
 
   &:hover h1{
     color: var(--highlight);
-  }
-}
-
-.postInfo {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-
-  span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    &:nth-child(1) {
-      margin-right: 1.5rem;
-    }
   }
 }

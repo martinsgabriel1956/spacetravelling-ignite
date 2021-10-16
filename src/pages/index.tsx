@@ -33,22 +33,41 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps) {
-  const [posts, setPosts] = useState(postsPagination.results);
+  const [posts, setPosts] = useState<Post[]>(postsPagination.results);
+  const [nextPost, setNextPost] = useState(postsPagination.next_page);
+
+  async function loadMorePosts(nextPage: string): Promise<void> {
+    const response = await fetch(nextPage);
+    const { next_page, results } = await response.json();
+
+    const newPostPagination = {
+      nextPage: next_page,
+      results: results.map(({ uid, first_publication_date, data }: Post) => {
+        return {
+          uid,
+          first_publication_date,
+          data,
+        };
+      }),
+    };
+    setNextPost(newPostPagination.nextPage);
+    setPosts(prevState => [...prevState, ...newPostPagination.results]);
+  }
 
   return (
     <>
       <Head>
         <title>Home | spacetravelling.</title>
       </Head>
-      <main className={styles.contentContainer}>
+      <main className={commonStyles.container}>
         <ul>
           {posts.map(post => (
             <li className={styles.postContainer} key={post.uid}>
-              <Link href="/">
+              <Link href={`/post/${post.uid}`}>
                 <a>
                   <h1>{post.data.title}</h1>
                   <p>{post.data.subtitle}</p>
-                  <div className={styles.postInfo}>
+                  <div className={commonStyles.postInfo}>
                     <span>
                       <FiCalendar
                         size={22}
@@ -81,8 +100,14 @@ export default function Home({ postsPagination }: HomeProps) {
             </li>
           ))}
         </ul>
-        {postsPagination.next_page !== null && (
-          <button type="button">Carregando mais posts</button>
+        {nextPost !== null && (
+          <button
+            className={styles.loadMorePostsButton}
+            type="button"
+            onClick={() => loadMorePosts(nextPost)}
+          >
+            Carregar mais posts
+          </button>
         )}
       </main>
     </>
@@ -95,7 +120,7 @@ export const getStaticProps: GetStaticProps = async () => {
     [Prismic.Predicates.at('document.type', 'posts')],
     {
       fetch: ['post.title', 'post.content'],
-      pageSize: 10,
+      pageSize: 3,
     }
   );
 
