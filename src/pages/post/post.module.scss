@@ -5,6 +5,50 @@
   }
 }
 
+.btnContainer {
+  border-top: 1px solid var(--body);
+  padding: 3rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  a {
+    color: var(--highlight);
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .previousPost, .nextPost {
+    width: 50%;
+  }
+
+  .previousPost {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nextPost  {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+.navigation {
+  margin: 4rem auto;
+  margin: 0 auto;
+
+  h3 {
+    font-size: 18px;
+    font-weight: normal;
+    color: var(--heading);
+    margin-bottom: 0.75rem;
+  }
+
+  
+}
+
 .title {
   padding: 6.5rem 0 2.5rem;
   font-size: 2.75rem;
@@ -13,20 +57,22 @@
 .lastPublication {
   margin-top: 1.5rem;
   font-style: italic;
-  color: var(--info)
+  color: var(--info);
 }
 
 .content {
   margin: 1rem 0;
-  
+  padding-bottom: 0.5rem;
+
   h2 {
     margin: 4rem 0 2.75rem;
     font-size: 2rem;
     font-weight: bold;
     color: var(--heading);
   }
-  
-  a, li {
+
+  a,
+  li {
     color: var(--highlight);
     text-decoration: none;
   }
@@ -35,11 +81,11 @@
     list-style: circle;
     list-style-position: inside;
     line-height: 1.5rem;
-    
+
     &:first-child {
       margin-top: 1.5rem;
     }
-    
+
     &:last-child {
       margin-bottom: 1.5rem;
     }
@@ -48,7 +94,7 @@
   p {
     margin: 1rem 0 1.75rem;
     font-size: 1.2rem;
-    line-height: 1.75rem
+    line-height: 1.75rem;
   }
 
   &:last-child {

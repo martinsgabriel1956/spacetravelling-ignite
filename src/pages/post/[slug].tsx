@@ -12,6 +12,7 @@ import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import Comments from '../../components/Comments';
 
 interface Post {
   first_publication_date: string | null;
@@ -33,10 +34,24 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  navigation: {
+    previousPost: {
+      uid: string;
+      data: {
+        title: string;
+      };
+    }[];
+    nextPost: {
+      uid: string;
+      data: {
+        title: string;
+      };
+    }[];
+  };
   preview: boolean;
 }
 
-export default function Post({ post, preview }: PostProps) {
+export default function Post({ post, preview, navigation }: PostProps) {
   const { isFallback } = useRouter();
 
   const estimatedTime = post.data.content.reduce((total, content) => {
@@ -62,7 +77,7 @@ export default function Post({ post, preview }: PostProps) {
           <div className={styles.bannerContainer}>
             <img src={post.data.banner.url} alt="" />
           </div>
-          <div className={commonStyles.container}>
+          <section className={commonStyles.container}>
             <h1 className={styles.title}>{post.data.title}</h1>
             <div className={commonStyles.postInfo}>
               <span>
@@ -119,6 +134,28 @@ export default function Post({ post, preview }: PostProps) {
                 </div>
               ))}
             </article>
+            <section className={`${styles.navigation}`}>
+              <div className={styles.btnContainer}>
+                {navigation?.previousPost.length > 0 && (
+                  <div className={styles.previousPost}>
+                    <h3>{navigation.previousPost[0].data.title}</h3>
+                    <Link href={`/post/${navigation.previousPost[0].uid}`}>
+                      <a>Post anterior</a>
+                    </Link>
+                  </div>
+                )}
+
+                {navigation?.nextPost.length > 0 && (
+                  <div className={styles.nextPost}>
+                    <h3>{navigation.nextPost[0].data.title}</h3>
+                    <Link href={`/post/${navigation.nextPost[0].uid}`}>
+                      <a>Próximo post</a>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </section>
+            <Comments />
             <div className={commonStyles.modePreviewContainer}>
               {preview && (
                 <aside className={commonStyles.buttonModePreview}>
@@ -128,7 +165,7 @@ export default function Post({ post, preview }: PostProps) {
                 </aside>
               )}
             </div>
-          </div>
+          </section>
         </>
       )}
     </>
@@ -163,6 +200,23 @@ export const getStaticProps: GetStaticProps = async ({
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
 
+  const previousPost = await prismic.query(
+    [Prismic.Predicates.at('document.type', 'posts')],
+    {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.first_publication_date ]',
+    }
+  );
+  const nextPost = await prismic.query(
+    [Prismic.Predicates.at('document.type', 'posts')],
+    {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.last_publication_date desc]',
+    }
+  );
+
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
@@ -186,6 +240,10 @@ export const getStaticProps: GetStaticProps = async ({
   return {
     props: {
       post,
+      navigation: {
+        previousPost: previousPost?.results,
+        nextPost: nextPost?.results,
+      },
       preview,
     },
   };
