@@ -19,7 +19,7 @@
 
 <br />
 
-> OBS: Adicionar os seguintes campos no arquivo .env.local:
+> OBS: Adicionar os seguintes campos no arquivo seu .env.local:
 
 ```env
   PRISMIC_API_ENDPOINT=seuEndpointDoPrismisc
