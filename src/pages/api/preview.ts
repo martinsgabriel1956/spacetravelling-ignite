@@ -13,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { token: ref, documentId } = req.query;
 
   const redirectUrl = await getPrismicClient(req)
-    .getPreviewResolver(ref, documentId)
+    .getPreviewResolver(String(ref), documentId)
     .resolve(linkResolver, '/');
 
   if (!redirectUrl) {
