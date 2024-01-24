@@ -7,6 +7,10 @@
   <img alt="Pull Request: Welcome" src="https://img.shields.io/static/v1?label=PRs&message=welcome&color=FF57B2&labelColor=F8F8F8&style=for-the-badge" />
 </p>
 
+<p align="center">
+  <img src="./.github/banner.png" alt="Home" />
+</p>
+
 <br />
 
 # :computer: Tecnologias

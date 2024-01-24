@@ -6,10 +6,8 @@ import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { RichText } from 'prismic-dom';
-
 import { useRouter } from 'next/router';
 import { getPrismicClient } from '../../services/prismic';
-
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import Comments from '../../components/Comments';
